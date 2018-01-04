@@ -560,7 +560,7 @@ DirView.prototype.setFileList = function (path, fileList) {
         size = v[1].size/1024./1024./1024.;
         unit = 'Gb'
       }
-      size = new String(size).slice(-3) + unit;
+      size = (""+size).substr(0,4) + unit;
     }
     var basename = v[0].replace(/^(.*)\/(.+)$/,'$2');
     var extra_class = '';
