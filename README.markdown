@@ -27,7 +27,7 @@ cmd line program started
  - [file](http://www.gnu.org/software/coreutils/coreutils.html) (coreutils)
  - [mpv](http://mpv.io/)
  - [feh](https://feh.finalrewind.org/)
- - [imagemagick](https://www.imagemagick.org/)
+ - [convert](https://www.imagemagick.org/) (imagemagick)
 
 
 Getting Started
@@ -47,6 +47,11 @@ or if started by ssh by the right user..
 		$ DISPLAY=:0 SERVE_DIR=$HOME lem wrc.lua 
 
 Your HOME directory should then be exposed at http://your-ip:8080/
+
+Preview
+-------
+
+![preview](https://user-images.githubusercontent.com/10823818/34558714-723e5170-f13f-11e7-9b87-6b33080ea4de.png)
 
 
 License
