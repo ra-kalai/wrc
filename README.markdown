@@ -40,11 +40,11 @@ Check out the sources
 
 then do
 
-		$ SERVE_DIR=$HOME lem wrc.lua 
+    $ SERVE_DIR=$HOME lem wrc.lua 
 
 or if started by ssh by the right user..
 
-		$ DISPLAY=:0 SERVE_DIR=$HOME lem wrc.lua 
+    $ DISPLAY=:0 SERVE_DIR=$HOME lem wrc.lua 
 
 Your HOME directory should then be exposed at http://your-ip:8080/
 
