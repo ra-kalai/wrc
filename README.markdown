@@ -11,21 +11,23 @@ My own usage of it, is to start video on a RPI, from my phone
 Features
 --------
 
- - Browse Directory
- - Possible preview of img file / text document
- - Display img / video
- - Web keyboard <- write to stdin of application - good to seek in video file
- - Process control - kill stop cont,.. the process we started
+ - Browse filesystem
+ - Possible preview of image file / text document while browsing the file system
+ - Display image / video
+ - Web Keyboard <- write to stdin of application - good to seek in video file
+ - Process control: kill stop cont,.. the process we started
 
 Requirement
 -----------
 
-[altered lem]: https://github.com/ra-kalai/lem/
-[lpeg]: http://www.inf.puc-rio.br/~roberto/lpeg/
+ - [altered lem](https://github.com/ra-kalai/lem/)
+ - [lpeg](http://www.inf.puc-rio.br/~roberto/lpeg/)
 
-[mpv]: http://mpv.io/ 
-[feh]: https://feh.finalrewind.org/
-[imagemagick]: https://www.imagemagick.org/
+cmd line program started
+ - [file](http://www.gnu.org/software/coreutils/coreutils.html) (coreutils)
+ - [mpv](http://mpv.io/)
+ - [feh](https://feh.finalrewind.org/)
+ - [imagemagick](https://www.imagemagick.org/)
 
 
 Getting Started
@@ -36,11 +38,12 @@ Check out the sources
     $ git clone git://github.com/ra-kalai/wrc.git
     $ cd wrc
 
-and do
+then do
 
 		$ SERVE_DIR=$HOME lem wrc.lua 
 
-    or if started by ssh by the right user..
+or if started by ssh by the right user..
+
 		$ DISPLAY=:0 SERVE_DIR=$HOME lem wrc.lua 
 
 Your HOME directory should then be exposed at http://your-ip:8080/
