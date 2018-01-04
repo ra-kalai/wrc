@@ -1,0 +1,321 @@
+html {
+  font-family: monospace;
+  font-size: 15px; }
+
+body {
+  font-size: 1rem;
+  margin: 0; }
+
+body.scroll-down div.toggle-icon,
+body.scroll-down div.toggle-detail,
+body.scroll-down div.toggle-dot-display,
+body.scroll-down div.toggle-preview,
+body.scroll-down div.list-proc,
+body.scroll-down input.path {
+  opacity: 0;
+  transition: opacity 200ms; }
+
+body.scroll-down.display-nav-bar div.toggle-icon,
+body.scroll-down.display-nav-bar div.toggle-detail,
+body.scroll-down.display-nav-bar div.toggle-dot-display,
+body.scroll-down.display-nav-bar div.toggle-preview,
+body.scroll-down.display-nav-bar input.path,
+body.scroll-down.display-nav-bar div.list-proc {
+  opacity: 1;
+  transition: opacity 200ms; }
+
+.dir-view {
+  /* widget */ }
+  .dir-view input.path,
+  .dir-view div.toggle-icon,
+  .dir-view div.toggle-detail,
+  .dir-view div.toggle-dot-display,
+  .dir-view div.toggle-preview,
+  .dir-view div.list-proc {
+    z-index: 1000;
+    position: fixed;
+    opacity: 1;
+    height: 2.5rem;
+    outline: none;
+    color: #999;
+    border-bottom: 1px solid #999;
+    border-right: 1px dashed #999;
+    font-size: 2rem;
+    background-color: #f3f3f3; }
+    .dir-view input.path.toggled,
+    .dir-view div.toggle-icon.toggled,
+    .dir-view div.toggle-detail.toggled,
+    .dir-view div.toggle-dot-display.toggled,
+    .dir-view div.toggle-preview.toggled,
+    .dir-view div.list-proc.toggled {
+      color: #111;
+      border-bottom: 1px solid #111;
+      border-right: 1px solid #111;
+      background: #efefef; }
+  .dir-view input.path {
+    background-color: #fefefe; }
+  .dir-view div.toggle-icon,
+  .dir-view div.toggle-detail,
+  .dir-view div.toggle-dot-display,
+  .dir-view div.toggle-preview,
+  .dir-view div.list-proc {
+    user-select: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    box-sizing: border-box; }
+  .dir-view input.path {
+    left: 0;
+    box-sizing: border-box;
+    font-size: 1.2rem;
+    width: 5rem; }
+    @media (min-width: 768px) {
+      .dir-view input.path {
+        left: 1rem;
+        width: 20rem; } }
+  .dir-view div.toggle-icon {
+    width: 2.5rem;
+    left: 5rem; }
+    @media (min-width: 768px) {
+      .dir-view div.toggle-icon {
+        left: 21rem; } }
+  .dir-view div.toggle-detail {
+    width: 2.5rem;
+    left: 7.5rem; }
+    @media (min-width: 768px) {
+      .dir-view div.toggle-detail {
+        left: 23.5rem; } }
+  .dir-view div.toggle-dot-display {
+    width: 2.5rem;
+    left: 9.5rem; }
+    @media (min-width: 768px) {
+      .dir-view div.toggle-dot-display {
+        left: 26rem; } }
+  .dir-view div.toggle-preview {
+    width: 2.5rem;
+    left: 12rem; }
+    @media (min-width: 768px) {
+      .dir-view div.toggle-preview {
+        left: 28.5rem; } }
+  .dir-view div.list-proc {
+    width: 2.5rem;
+    left: 14.5rem; }
+    @media (min-width: 768px) {
+      .dir-view div.list-proc {
+        left: 31rem; } }
+  .dir-view .file-dir-list {
+    display: flex;
+    flex-direction: column;
+    font-size: 1.3rem; }
+    @media (min-width: 768px) {
+      .dir-view .file-dir-list {
+        margin: 0 1rem; } }
+    .dir-view .file-dir-list .preview {
+      display: none; }
+    .dir-view .file-dir-list.preview .preview {
+      display: block;
+      word-break: break-word; }
+      .dir-view .file-dir-list.preview .preview img {
+        display: block;
+        margin: 0 auto; }
+      .dir-view .file-dir-list.preview .preview .text-preview {
+        font-size: 0.8rem;
+        white-space: pre-wrap;
+        max-height: 8rem;
+        overflow: hidden; }
+      .dir-view .file-dir-list.preview .preview .filetype {
+        font-size: 0.8rem;
+        text-align: center; }
+    .dir-view .file-dir-list.detail div.entry {
+      position: relative; }
+      .dir-view .file-dir-list.detail div.entry:after {
+        content: attr(data-size) " | " attr(data-permissions);
+        width: 100%;
+        font-size: 0.9rem;
+        text-align: right; }
+    .dir-view .file-dir-list div.entry {
+      word-break: break-all;
+      justify-content: center;
+      cursor: pointer;
+      width: 100%;
+      line-height: 1.8rem;
+      min-height: 3.6rem;
+      transition: background-color 1s;
+      display: flex;
+      flex-direction: column; }
+      .dir-view .file-dir-list div.entry .filename {
+        word-break: break-all;
+        user-select: none; }
+      .dir-view .file-dir-list div.entry.long-press {
+        background-color: yellow; }
+    .dir-view .file-dir-list .directory {
+      background-color: aliceblue; }
+      .dir-view .file-dir-list .directory:nth-child(2n+1) {
+        background-color: white; }
+    .dir-view .file-dir-list div.directory.dotdot {
+      height: 2.5rem;
+      min-height: 2.5rem;
+      line-height: 2;
+      background-color: #f3f3f3;
+      text-align: right; }
+      .dir-view .file-dir-list div.directory.dotdot:before {
+        content: ''; }
+      .dir-view .file-dir-list div.directory.dotdot:after {
+        content: ''; }
+    .dir-view .file-dir-list .file {
+      background-color: cornsilk; }
+      .dir-view .file-dir-list .file:nth-child(2n+1) {
+        background-color: #fffbeb; }
+    .dir-view .file-dir-list.icon {
+      flex-direction: row;
+      flex-wrap: wrap; }
+      .dir-view .file-dir-list.icon div.entry {
+        width: 49%; }
+      .dir-view .file-dir-list.icon div:nth-child(2n+1) {
+        margin-left: 2%; }
+      .dir-view .file-dir-list.icon .directory.dotdot {
+        width: 100%;
+        margin-left: 0; }
+      .dir-view .file-dir-list.icon .directory {
+        background-color: white; }
+        .dir-view .file-dir-list.icon .directory:nth-child(4n-2), .dir-view .file-dir-list.icon .directory:nth-child(4n-1) {
+          background: aliceblue; }
+      .dir-view .file-dir-list.icon .file {
+        background-color: #fffbeb; }
+        .dir-view .file-dir-list.icon .file:nth-child(4n-2), .dir-view .file-dir-list.icon .file:nth-child(4n-1) {
+          background: cornsilk; }
+      @media (min-width: 992px) {
+        .dir-view .file-dir-list.icon div.entry {
+          width: 32%; }
+        .dir-view .file-dir-list.icon div:nth-child(2n+1) {
+          margin-left: 0; }
+        .dir-view .file-dir-list.icon div:nth-child(3n),
+        .dir-view .file-dir-list.icon div:nth-child(3n+1) {
+          margin-left: 2%; }
+        .dir-view .file-dir-list.icon .directory:nth-child(6n-2), .dir-view .file-dir-list.icon .directory:nth-child(6n-3), .dir-view .file-dir-list.icon .directory:nth-child(6n-4) {
+          background: white; }
+        .dir-view .file-dir-list.icon .directory:nth-child(6n+1), .dir-view .file-dir-list.icon .directory:nth-child(6n), .dir-view .file-dir-list.icon .directory:nth-child(6n-1) {
+          background: aliceblue; }
+        .dir-view .file-dir-list.icon .file:nth-child(6n-2), .dir-view .file-dir-list.icon .file:nth-child(6n-3), .dir-view .file-dir-list.icon .file:nth-child(6n-4) {
+          background: #fffbeb; }
+        .dir-view .file-dir-list.icon .file:nth-child(6n+1), .dir-view .file-dir-list.icon .file:nth-child(6n), .dir-view .file-dir-list.icon .file:nth-child(6n-1) {
+          background: cornsilk; } }
+    .dir-view .file-dir-list.hide-dot .dot {
+      display: none; }
+  .dir-view .file-control {
+    position: fixed;
+    z-index: 1500;
+    background: rgba(255, 248, 220, 0.9);
+    top: 0px;
+    bottom: 0px;
+    width: 100%;
+    font-size: 1.8rem; }
+    .dir-view .file-control .filepath {
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: #000;
+      background: rgba(250, 250, 250, 0.6);
+      border-bottom: 1px solid #999; }
+    .dir-view .file-control .other {
+      display: flex;
+      box-shadow: 0px 2px 4px #999;
+      text-align: center; }
+      .dir-view .file-control .other .prev,
+      .dir-view .file-control .other .next {
+        width: 50%;
+        background: white;
+        user-select: none;
+        cursor: pointer; }
+      .dir-view .file-control .other .prev {
+        border-right: 1px solid #999;
+        background: #ffeea9; }
+  .dir-view .process-list {
+    position: fixed;
+    background: rgba(255, 248, 220, 0.9);
+    z-index: 2200;
+    width: 100%;
+    top: 0px;
+    bottom: 0px;
+    font-size: 1.8rem; }
+  .dir-view .virtual-keyboard {
+    position: fixed;
+    background: rgba(255, 248, 220, 0.9);
+    z-index: 3000;
+    width: 100%;
+    top: 0px;
+    bottom: 0px;
+    user-select: none; }
+    .dir-view .virtual-keyboard .row {
+      display: flex;
+      justify-content: center;
+      flex-direction: row; }
+    .dir-view .virtual-keyboard .row .key:first-child {
+      flex: 2; }
+    .dir-view .virtual-keyboard .key {
+      cursor: pointer;
+      user-select: none;
+      flex: 1;
+      text-align: center;
+      background-color: azure;
+      margin: 0.1rem;
+      font-size: 8vw;
+      border-radius: 2px;
+      transition: background-color 0.2s; }
+      .dir-view .virtual-keyboard .key.toggled {
+        background-color: coral; }
+  .dir-view .control {
+    display: flex;
+    flex-direction: row;
+    user-select: none;
+    cursor: pointer;
+    position: fixed;
+    bottom: 0px;
+    right: 0px;
+    left: 0px;
+    box-shadow: 0px -2px 4px 0px #999;
+    text-align: center; }
+    .dir-view .control .close {
+      width: 100%;
+      background: orange; }
+    .dir-view .control .display {
+      width: 100%;
+      background: lightblue; }
+  .dir-view .process-control-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid #999; }
+  .dir-view .process-control {
+    background-color: white;
+    margin: 0.2rem;
+    text-align: center;
+    font-size: 1.8rem; }
+    .dir-view .process-control .process-info {
+      text-align: center; }
+      .dir-view .process-control .process-info .cmd,
+      .dir-view .process-control .process-info .pid {
+        display: inline; }
+    .dir-view .process-control .control {
+      display: flex;
+      position: initial;
+      justify-content: center;
+      flex-direction: column; }
+      .dir-view .process-control .control .send-signal {
+        display: flex; }
+        .dir-view .process-control .control .send-signal div {
+          margin: 5px; }
+        .dir-view .process-control .control .send-signal .hup {
+          background: #f1d1d1; }
+        .dir-view .process-control .control .send-signal .term {
+          background: #e5aaaa; }
+        .dir-view .process-control .control .send-signal .kill {
+          background: indianred; }
+        .dir-view .process-control .control .send-signal .stop {
+          background: #ffc966; }
+        .dir-view .process-control .control .send-signal .cont {
+          background: #00e600; }
+      .dir-view .process-control .control .stdin {
+        background: lightskyblue;
+        width: 100%; }

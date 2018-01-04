@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="browse.css" type="text/css">
+<meta name="viewport" content="width=device-width, user-scalable=no">
+<script src=jquery.js></script>
+<body>
+<script>
+function toggleFullScreen() {
+  var doc = window.document;
+  var docEl = doc.documentElement;
+
+  var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+  var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+  if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+    requestFullScreen.call(docEl);
+  }
+  else {
+    cancelFullScreen.call(doc);
+  }
+}
+
+
+// on mobile phone first click should trigger fullscreen
+if (typeof window.orientation !== 'undefined') {
+  $('html').on({click: function () {
+    toggleFullScreen();
+    $('html').off('click');
+  }});
+}
+
+(function($) {
+  $.fn.longPress = function(callback, timeout) {
+    var timer = -1;
+    timeout = timeout || 1000;
+    var self = $(this);
+
+    function cleanup () {
+      if (timer == -1)
+        return ;
+
+      $('body').off('mousemove');
+      self.removeClass('long-press');
+      clearTimeout(timer);
+
+      timer = -1;
+    }
+
+    function callLater(ev)  {
+      if (timer == -1) {
+        timer = setTimeout(function () {
+          callback.bind(self)();
+          cleanup();
+        }, timeout);
+        self.addClass('long-press');
+      } 
+    }
+
+
+    var it = 0;
+    var ypos_start;
+    self.on({
+      touchstart: function (ev) {
+        ypos_start = ev.originalEvent.touches[0].screenY;
+        callLater(ev);
+        return false;
+      },
+      touchmove: function (ev) {
+        it += 1;
+        if (it & 2) {
+          window.scrollBy(0, (ypos_start - ev.originalEvent.touches[0].screenY));
+          ypos_start = ev.originalEvent.touches[0].screenY;
+
+          console.log(ypos_start,ev.originalEvent.touches[0] );
+        }
+      },
+      touchend: function (ev) {
+        cleanup();
+      },
+      mousedown: function (ev) {
+        ypos_start = ev.originalEvent.screenY;
+        callLater(ev);
+        $('body').on({mousemove: function (ev) {
+          it += 1;
+          if (it & 2) {
+            window.scrollBy(0, (ypos_start - ev.originalEvent.screenY));
+            ypos_start = ev.originalEvent.screenY;
+          }
+        }});
+      },
+      mouseup: cleanup,
+      mouseleave: cleanup
+    });
+  };
+})(jQuery);
+
+function VirtualKeyboard(process) {
+  var self = this;
+  this.dom = {};
+  this.dom.root =
+    $('<div>').addClass('virtual-keyboard')
+              .append(
+      $('<div>').addClass('control')
+                .append(
+        $('<div>').addClass('close')
+                  .text('close')
+                  .click(function () {
+                    self.dom.root.remove();
+                  })
+                ),
+      $('<div>').addClass('layout')
+                .append(
+        $('<div>').addClass('row')
+                  .append(
+          $('<div>').addClass('key').text('esc').data('code', '\033'),
+          $('<div>').addClass('key').text('←').data('code', '\033[b'),
+          $('<div>').addClass('key').text('↓').data('code', '\033[B'),
+          $('<div>').addClass('key').text('↑').data('code', '\033[A'),
+          $('<div>').addClass('key').text('→').data('code', '\033[a')
+        ),
+        $('<div>').addClass('row')
+                  .append(
+          $('<div>').addClass('key').text('`').data('maj', '~'),
+          $('<div>').addClass('key').text('1').data('maj', '!'),
+          $('<div>').addClass('key').text('2').data('maj', '@'),
+          $('<div>').addClass('key').text('3').data('maj', '#'),
+          $('<div>').addClass('key').text('4').data('maj', '$'),
+          $('<div>').addClass('key').text('5').data('maj', '%'),
+          $('<div>').addClass('key').text('6').data('maj', '^'),
+          $('<div>').addClass('key').text('7').data('maj', '&'),
+          $('<div>').addClass('key').text('8').data('maj', '*'),
+          $('<div>').addClass('key').text('9').data('maj', '('),
+          $('<div>').addClass('key').text('0').data('maj', ')'),
+          $('<div>').addClass('key').text('-').data('maj', '_'),
+          $('<div>').addClass('key').text('=').data('maj', '+')
+        ),
+        $('<div>').addClass('row')
+                  .append(
+          $('<div>').addClass('key').text('tab').data('code', '\t'),
+          $('<div>').addClass('key').text('q').data('maj', 'Q'),
+          $('<div>').addClass('key').text('w').data('maj', 'W'),
+          $('<div>').addClass('key').text('e').data('maj', 'E'),
+          $('<div>').addClass('key').text('r').data('maj', 'R'),
+          $('<div>').addClass('key').text('t').data('maj', 'T'),
+          $('<div>').addClass('key').text('y').data('maj', 'Y'),
+          $('<div>').addClass('key').text('u').data('maj', 'U'),
+          $('<div>').addClass('key').text('i').data('maj', 'I'),
+          $('<div>').addClass('key').text('o').data('maj', 'O'),
+          $('<div>').addClass('key').text('p').data('maj', 'P'),
+          $('<div>').addClass('key').text('[').data('maj', '{'),
+          $('<div>').addClass('key').text(']').data('maj', '}')
+        ),
+        $('<div>').addClass('row')
+                  .append(
+          $('<div>').addClass('key').text('maj').click(function (ev) { self.majPressed(ev, $(this)); }),
+          $('<div>').addClass('key').text('a').data('maj', 'A'),
+          $('<div>').addClass('key').text('s').data('maj', 'S'),
+          $('<div>').addClass('key').text('d').data('maj', 'D'),
+          $('<div>').addClass('key').text('f').data('maj', 'F'),
+          $('<div>').addClass('key').text('g').data('maj', 'G'),
+          $('<div>').addClass('key').text('h').data('maj', 'H'),
+          $('<div>').addClass('key').text('j').data('maj', 'J'),
+          $('<div>').addClass('key').text('k').data('maj', 'K'),
+          $('<div>').addClass('key').text('l').data('maj', 'L'),
+          $('<div>').addClass('key').text(';').data('maj', ':'),
+          $('<div>').addClass('key').text('\'').data('maj', '\"'),
+          $('<div>').addClass('key').text('\\').data('maj', '|')
+        ),
+        $('<div>').addClass('row')
+                  .append( this.dom.ctrlButton =
+          $('<div>').addClass('key').text('ctrl').click(function (ev) { self.controlPressed(ev, $(this)); }),
+          $('<div>').addClass('key').text('z').data('maj', 'Z').data('ccode', '\032'),
+          $('<div>').addClass('key').text('x').data('maj', 'X'),
+          $('<div>').addClass('key').text('c').data('maj', 'C').data('ccode', '\003'),
+          $('<div>').addClass('key').text('v').data('maj', 'V'),
+          $('<div>').addClass('key').text('b').data('maj', 'B'),
+          $('<div>').addClass('key').text('n').data('maj', 'N'),
+          $('<div>').addClass('key').text('m').data('maj', 'M'),
+          $('<div>').addClass('key').text(',').data('maj', '<'),
+          $('<div>').addClass('key').text('.').data('maj', '>'),
+          $('<div>').addClass('key').text('/').data('maj', '?'),
+          $('<div>').addClass('key').text('sp').data('code', ' ')
+        )
+      ).click(function (ev) {
+        var target = $(ev.target);
+        if (!target.hasClass('key'))
+          return ;
+
+        var text = target.data('code');
+        if (!text) text = target.text();
+
+        if (self.sendCtrl) {
+          if (!(text = target.data('ccode'))) {
+            return ;
+          }
+          self.dom.ctrlButton.trigger('click');
+        }
+          
+
+        target.toggleClass('toggled');
+        var uri = '/write-to-stdin/'+process.pid+'/'+text;
+
+        $.getJSON(uri, function(json) { });
+        setTimeout(function () {
+          target.removeClass('toggled');
+        }, 200);
+      })
+  );
+
+  $('.key', self.dom.root).each(function () {
+    var maj = $(this).data('maj');
+    if (maj) {
+      $(this).data('un-maj', $(this).text());
+    }
+  });
+
+  return this;
+}
+
+VirtualKeyboard.prototype.majPressed = function (ev, key) {
+  key.toggleClass('toggled');
+  ev.stopPropagation();
+  $('.key', this.dom.root).each(function () {
+    $(this).toggleClass('maj');
+
+    var maj = $(this).data('maj');
+    if (!maj) return ;
+
+    if ($(this).hasClass('maj'))
+      $(this).text(maj)
+    else
+      $(this).text($(this).data('un-maj'))
+    
+  });
+  return false;
+};
+
+VirtualKeyboard.prototype.controlPressed = function (ev, key) {
+  key.toggleClass('toggled');
+  this.sendCtrl = !!!this.sendCtrl;
+  ev.stopPropagation();
+  return false;
+};
+
+function ProcessList() {
+  var self = this;
+  this.processList = [];
+  this.dom = {};
+  this.dom.root =
+    $('<div>').addClass('process-list')
+              .append(
+      $('<div>').addClass('control')
+                .append(
+        $('<div>').text('close')
+                  .addClass('close')
+                  .click(function () {
+                    self.remove();
+                  })), this.dom.processControlList =
+      $('<div>').addClass('process-control-list'));
+
+  $.getJSON('/process-list', function (json) {
+    if (json[0] !== 'ok') return;
+    
+    $.each(json[1], function (k, v) {
+      var pid = v[0];
+      var cmd = v[1];
+
+      var pc = new ProcessControl({pid: pid, cmd: cmd});
+      self.processList.push(pc);
+      self.dom.processControlList.append(pc.dom.root);
+    });
+    
+  });
+  return this;
+}
+
+ProcessList.prototype.remove = function () {
+  $.each(this.processList, function (k, v) {
+    v.remove();
+  });
+  this.dom.root.remove();
+};
+
+function ProcessControl(process) {
+  var self = this;
+  this.dom = {};
+  this.dom.root =
+    $('<div>').addClass('process-control')
+              .append(
+      $('<div>').addClass('process-info')
+                .append(
+        $('<div>').addClass('pid').text('[' + process.pid + ']'),
+        $('<div>').addClass('cmd').text(process.cmd.join(' '))
+      ),
+      $('<div>').addClass('control')
+                .append(
+        $('<div>').addClass('send-signal')
+                  .append(
+          $('<div>').addClass('hup')
+                    .text('hup')
+                    .click(function () {
+            var uri = '/kill-process/1/' + process.pid;
+            $.getJSON(uri, function () { });
+          }),
+          $('<div>').addClass('term')
+                    .text('term')
+                    .click(function () {
+            var uri = '/kill-process/15/' + process.pid;
+            $.getJSON(uri, function () { });
+          }),
+          $('<div>').addClass('kill')
+                    .text('kill')
+                    .click(function () {
+            var uri = '/kill-process/9/' + process.pid;
+            $.getJSON(uri, function () { });
+          }),
+          $('<div>').addClass('stop')
+                    .text('stop')
+                    .click(function () {
+            var uri = '/kill-process/19/' + process.pid;
+            $.getJSON(uri, function () { });
+          }),
+          $('<div>').addClass('cont')
+                    .text('cont')
+                    .click(function () {
+            var uri = '/kill-process/18/' + process.pid;
+            $.getJSON(uri, function () { });
+          })
+        ),
+        $('<div>').addClass('stdin')
+                  .text('stdin')
+                  .click(function () {
+          var kb =new VirtualKeyboard(process);
+          self.dom.root.after(kb.dom.root);
+          //var uri = '/kill-process/9/' + process.pid;
+          //$.getJSON(uri, function () { });
+        })
+    ));
+
+  this.pollInterval = setInterval(function () {
+    var uri = '/is-process-alive/' + process.pid;
+    $.getJSON(uri, function (json) {
+      if (json[0] != 'ok') return ;
+      if (json[1] != 'alive') {
+        self.remove();
+      }
+    });
+  }, 1000);
+
+  return this;
+}
+
+ProcessControl.prototype.remove = function () {
+  this.dom.root.remove();
+  if (this.pollInterval !== -1) {
+    clearInterval(this.pollInterval);
+    this.pollInterval = -1;
+  }
+};
+
+function FileControl(file) {
+  var self = this;
+  this.processList = [];
+  this.file = file;
+  this.dom = {};
+  this.dom.root =
+    $('<div>').addClass('file-control')
+              .append( this.dom.filepath =
+      $('<div>').addClass('filepath')
+                .text(file.path),
+      $('<div>').addClass('other')
+                .append(
+        $('<div>').addClass('prev')
+                  .text('prev')
+                  .click(this.prevFile.bind(this)),
+        $('<div>').addClass('next')
+                  .text('next')
+                  .click(this.nextFile.bind(this))
+      ),
+      $('<div>').addClass('control')
+                .append(
+        $('<div>').text('display')
+                  .addClass('display')
+                  .click(function () {
+                    var uri = '/display/' + file.path;
+                    $.getJSON(uri, function (json) {
+                      var pc = new ProcessControl({pid: json[1].pid, cmd: json[1].cmd});
+                      self.processList.push(pc);
+                      self.dom.processControlList.append(pc.dom.root);
+                    });
+                  }),
+        $('<div>').text('close')
+                  .addClass('close')
+                  .click(function () {
+                    self.remove();
+                  })
+        ), this.dom.processControlList =
+      $('<div>').addClass('process-control-list')
+    );
+  return this;
+}
+
+FileControl.prototype.prevFile = function () {
+  var f = this.file.item.prev();
+  if (f.length && f.hasClass('file')) {
+    this.file.item = f;
+    this.file.filepath = f.data('path');
+    this.dom.filepath.text(this.file.filepath);
+  }
+};
+
+FileControl.prototype.nextFile = function () {
+  var f = this.file.item.next();
+  if (f.length) {
+    this.file.item = f;
+    this.file.filepath = f.data('path');
+    this.dom.filepath.text(this.file.filepath);
+  }
+};
+
+FileControl.prototype.remove = function () {
+  $.each(this.processList, function (k, v) {
+    v.remove();
+  });
+  this.dom.root.remove();
+};
+
+var g_block_hash_event = false;
+
+function fetchPath(remote_location, after) {
+  g_block_hash_event = true;
+  window.location.hash = remote_location;
+  console.log('fetch', remote_location);
+  g_block_hash_event = false;
+  $.getJSON('/browse/'+remote_location, function (j) {
+    after([[ remote_location.replace(/^(.*)\/(.+)$/, '$1'), {mode: 'directory dotdot'}]].concat(j));
+  });
+}
+
+
+function DirView() {
+  var self = this;
+  this.dom = {};
+  this.dom.root =
+    $('<div>').addClass('dir-view')
+              .append( this.dom.path =
+      $('<input>').addClass('path')
+                  .change(function () {
+        window.location.hash = $(this).val();
+      }),
+      $('<div>').addClass('toggle-icon')
+                .text('M')
+                .click(function () {
+        $(this).toggleClass('toggled');
+        self.dom.dirFileList.toggleClass('icon');
+      }),
+      $('<div>').addClass('toggle-detail toggled')
+                .text('D')
+                .click(function () {
+        $(this).toggleClass('toggled');
+        self.dom.dirFileList.toggleClass('detail');
+      }),
+      $('<div>').addClass('toggle-dot-display')
+                .text('A')
+                .click(function () {
+        $(this).toggleClass('toggled');
+        self.dom.dirFileList.toggleClass('hide-dot');
+        if (self.dom.dirFileList.hasClass('hide-dot')) {
+          $('.dot', self.dom.dirFileList).remove();
+        } else {
+          $(window).trigger('hashchange');
+        }
+      }),
+      $('<div>').addClass('toggle-preview')
+                .text('P')
+                .click(function () {
+        $(this).toggleClass('toggled');
+        self.dom.dirFileList.toggleClass('preview');
+        self.triggerPreview();
+      }),
+      $('<div>').addClass('list-proc')
+                .text('T')
+                .click(function () {
+        var procList = new ProcessList();
+        self.dom.root.append(procList.dom.root);
+      }), this.dom.dirFileList =
+      $('<div>').addClass('file-dir-list detail hide-dot')
+                .click(this.itemClicked.bind(this)));
+}
+
+DirView.prototype.triggerPreview = function () {
+  if (!this.dom.dirFileList.hasClass('preview'))
+    return;
+  
+  this.dom.dirFileList.children().each(function () {
+    var file = $(this).data('path');
+    var elem = $(this);
+    if ($('.preview', elem).length) return ;
+    if (elem.hasClass('dotdot')) {
+      return ;
+    }
+    $.getJSON('preview/'+file, function (j) {
+      elem.append(
+        $('<div>').addClass('preview')
+                  .append(
+          (function () {
+            if (j.preview)
+              return $('<img>').attr('src', 'data:image/jpeg;base64, '+j.preview);
+          })(),
+          (function () {
+            if (j.ts)
+              return $('<div>').addClass('text-preview').text(j.ts)
+          })(),
+          $('<div>').addClass('filetype')
+                    .text(j.filetype)
+        )
+      );
+    });
+    
+  });
+}
+
+DirView.prototype.itemClicked = function (ev) {
+  var target = $(ev.target);
+  if (target.hasClass('filename')) {
+    target = target.parent();
+  }
+  var kind = target.data('kind');
+
+
+  if (kind) {
+    if (kind.indexOf('directory') !== -1) {
+      var path = target.data('path');
+      fetchPath(path, viewer.setFileList.bind(viewer, path));
+    } else {
+      ;
+    }
+  }
+};
+
+DirView.prototype.setFileList = function (path, fileList) {
+  var self = this;
+  var dirFileList = this.dom.dirFileList;
+  this.dom.path.val(path);
+  dirFileList.html('');
+  var size;
+  $.each(fileList, function (k, v) {
+    size = -1;
+    if (v[1].mode.indexOf('directory')!==-1) {
+      size = v[1].size;
+    } else {
+      var unit = 'Kb';
+      size = v[1].size/1024.
+      if (size > 1024) {
+        size = v[1].size/1024./1024.;
+        unit = 'Mb'
+      }
+      if (size > 1024) {
+        size = v[1].size/1024./1024./1024.;
+        unit = 'Gb'
+      }
+      size = new String(size).slice(-3) + unit;
+    }
+    var basename = v[0].replace(/^(.*)\/(.+)$/,'$2');
+    var extra_class = '';
+
+
+    if (basename.indexOf('.') === 0) {
+      extra_class = ' dot';
+      if (self.dom.dirFileList.hasClass('hide-dot'))
+        return ;
+    }
+
+    if (v[1].mode.indexOf('dotdot') !== -1) {
+      basename = '..';
+    }
+
+    dirFileList.append(
+      $('<div>').addClass('entry ' + v[1].mode + extra_class)
+                .attr({
+                  'data-path': v[0],
+                  'data-kind': v[1].mode,
+                  'data-permissions': v[1].permissions,
+                  'data-size': size
+                })
+                .append($('<div>').addClass('filename').text(basename)));
+  });
+
+  self.triggerPreview();
+
+  $('.entry.file', dirFileList).each(function () {
+    $(this).longPress(function () {
+      //console.log('long press cb', $(this).data('path'));
+      var f = new FileControl({path: $(this).data('path'), item: $(this)});
+      self.dom.root.append(f.dom.root);
+    });
+  });
+};
+
+var viewer = new DirView();
+$('body').append(viewer.dom.root)
+
+$(window).on('hashchange', function() {
+  if (g_block_hash_event == true) return ;
+
+  var hash = window.location.hash.replace(/^#/,'');
+  if (hash == '') {
+    hash = '~';
+  }
+  fetchPath(hash, viewer.setFileList.bind(viewer, hash));
+});
+
+$(window).trigger('hashchange');
+
+(function () {
+  var old_st;
+  $(window).scroll(function() {
+    var st = $(this).scrollTop();
+
+    if (st>0) {
+      $('body').addClass('scroll-down');
+      $('body').removeClass('display-nav-bar');
+    } else {
+      $('body').removeClass('scroll-down');
+    }
+
+    if (old_st && old_st > st) {
+      $('body').addClass('display-nav-bar');
+    }
+    old_st = st;
+  });
+})();
+
+</script>
