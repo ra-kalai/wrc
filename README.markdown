@@ -3,17 +3,19 @@ WRC - Web Remote Control
 
 About
 -----
+
 Web Remote Control is a proof of concept daemon, made to start desktop application from a web browser
 
 My own usage of it, is to start video on a RPI, from my phone
 
 Features
 --------
-Browse Directory
-Possible preview of img file / text document
-Display img / video
-Web keyboard <- write to stdin of application - good to seek in video file
-Process control kill stop cont,.. the process we started
+
+ - Browse Directory
+ - Possible preview of img file / text document
+ - Display img / video
+ - Web keyboard <- write to stdin of application - good to seek in video file
+ - Process control - kill stop cont,.. the process we started
 
 Requirement
 -----------
@@ -28,6 +30,7 @@ Requirement
 
 Getting Started
 ---------------
+
 Check out the sources
 
     $ git clone git://github.com/ra-kalai/wrc.git
